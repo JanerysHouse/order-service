@@ -1,7 +1,6 @@
 -- liquibase formatted sql
-
 -- changeset janeryshouse:1740244569891-1
-CREATE TABLE "order"
+CREATE TABLE IF NOT EXISTS orders
 (
     id           UUID NOT NULL,
     order_number VARCHAR(255),

@@ -8,5 +8,5 @@ import java.util.UUID;
 /**
  * DTO for {@link Order}
  */
-public record OrderRequst(UUID id, String orderNumber, String skuCode, BigDecimal price, Integer quantity) {
+public record OrderRequest(UUID id, String orderNumber, String skuCode, BigDecimal price, Integer quantity) {
 }

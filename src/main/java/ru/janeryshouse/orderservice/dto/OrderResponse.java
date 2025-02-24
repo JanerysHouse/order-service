@@ -1,4 +1,6 @@
-package ru.janeryshouse.orderservice.model;
+package ru.janeryshouse.orderservice.dto;
+
+import ru.janeryshouse.orderservice.model.Order;
 
 import java.math.BigDecimal;
 import java.util.UUID;

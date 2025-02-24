@@ -1,1 +1,8 @@
-spring.application.name=order-service
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    password: postgres
+    username: postgres
+    url: jdbc:postgresql://localhost:5432/mydb
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.xml
