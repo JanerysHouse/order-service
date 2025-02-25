@@ -8,7 +8,6 @@ import ru.janeryshouse.orderservice.dto.OrderResponse;
 import ru.janeryshouse.orderservice.model.Order;
 import ru.janeryshouse.orderservice.service.OrderService;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,12 +36,12 @@ public class OrderController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<OrderResponse> update(@RequestBody OrderRequest request) {
         return ResponseEntity.ok(orderService.update(request));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         orderService.delete(id);
         return ResponseEntity.noContent().build();
