@@ -31,9 +31,7 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<OrderResponse> create(@RequestBody OrderRequest request) {
-        return orderService.create(request)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(orderService.create(request));
     }
 
     @PutMapping("/update/{id}")

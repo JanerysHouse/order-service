@@ -3,6 +3,7 @@ package ru.janeryshouse.orderservice.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.janeryshouse.orderservice.client.InventoryClient;
 import ru.janeryshouse.orderservice.dto.OrderRequest;
 import ru.janeryshouse.orderservice.dto.OrderResponse;
 import ru.janeryshouse.orderservice.mapper.OrderMapper;
@@ -20,6 +21,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
+    private final InventoryClient inventoryClient;
 
 
     public List<OrderResponse> getAll() {
@@ -28,21 +30,23 @@ public class OrderService {
                 .toList();
     }
 
-
     public Order findById(UUID id) {
-        return  orderRepository.findById(id).orElseThrow(
+        return orderRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Order not found"));
     }
 
-    public Optional<OrderResponse> create(OrderRequest request) {
+    public OrderResponse create(OrderRequest request) {
         return Optional.of(request)
+                .filter(req -> inventoryClient.isInStock(req.skuCode(), req.quantity()))
                 .map(orderMapper::toEntity)
                 .map(orderRepository::save)
                 .map(orderMapper::toOrderResponse)
-                        .map(savedEntity -> {
-                            log.info("Продукт создан: {}", savedEntity);
-                            return savedEntity;
-                        });
+                .map(savedEntity -> {
+                    log.info("Продукт создан: {}", savedEntity);
+                    return savedEntity;
+                })
+                .orElseThrow(() -> new RuntimeException("Product not stock"));
+
     }
 
     public OrderResponse update(OrderRequest request) {

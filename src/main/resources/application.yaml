@@ -3,6 +3,12 @@ spring:
     driver-class-name: org.postgresql.Driver
     password: postgres
     username: postgres
-    url: jdbc:postgresql://localhost:5432/mydb
+    url: jdbc:postgresql://localhost:5432/order-service
   liquibase:
     change-log: classpath:/db/changelog/db.changelog-master.xml
+server:
+  port: 8081
+
+inventory:
+  url:
+    8082
