@@ -6,9 +6,28 @@ spring:
     url: jdbc:postgresql://localhost:5432/order-service
   liquibase:
     change-log: classpath:/db/changelog/db.changelog-master.xml
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    producer:
+      acks: 1
+      retries: 3
+      properties:
+        enable.idempotence: false
+      info:
+        replication-factor: 1
+        message-lifetime: 3600000
+    topics:
+      notifications: notifications
+      create-order: create-order
+
 server:
   port: 8081
 
 inventory:
   url:
     8082
+
+springdoc:
+  swagger-ui:
+    path: "/swagger-ui.html"

@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import ru.janeryshouse.orderservice.client.InventoryClient;
 import ru.janeryshouse.orderservice.dto.OrderRequest;
 import ru.janeryshouse.orderservice.dto.OrderResponse;
+import ru.janeryshouse.orderservice.event.OrderPlacedEvent;
+import ru.janeryshouse.orderservice.kafka.producer.ProducerService;
 import ru.janeryshouse.orderservice.mapper.OrderMapper;
 import ru.janeryshouse.orderservice.model.Order;
 import ru.janeryshouse.orderservice.repository.OrderRepository;
@@ -22,6 +24,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
     private final InventoryClient inventoryClient;
+    private final ProducerService producerService;
 
 
     public List<OrderResponse> getAll() {
@@ -40,11 +43,12 @@ public class OrderService {
                 .filter(req -> inventoryClient.isInStock(req.skuCode(), req.quantity()))
                 .map(orderMapper::toEntity)
                 .map(orderRepository::save)
-                .map(orderMapper::toOrderResponse)
-                .map(savedEntity -> {
-                    log.info("Продукт создан: {}", savedEntity);
-                    return savedEntity;
+                .map(savedOrder -> {
+                    OrderPlacedEvent event = orderMapper.toOrderPlacedEvent(savedOrder, request);
+                    producerService.sendOrder(event);
+                    return savedOrder;
                 })
+                .map(orderMapper::toOrderResponse)
                 .orElseThrow(() -> new RuntimeException("Product not stock"));
 
     }
